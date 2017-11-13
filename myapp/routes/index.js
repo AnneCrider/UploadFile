@@ -16,18 +16,20 @@ router.get('/uploaddufichier', function(req,res,next) {
 });
 
 router.post('/uploaddufichier', upload.array('monfichier', 4), function(req, res, next){
-  console.log(req.file);
-  if (req.files.size<(3*1024*1024) && req.files.mimetype == 'image/png'){
+  
+  req.files.forEach(function(image){
+    console.log(image);
+  if (image.size<(3*1024*1024) && image.mimetype == 'image/png'){
     //traitement du formulaire
     console.log('c\'est ok');
     //déplacement fichier du tmp à public/images
-    fs.rename(req.files.path, 'public/images/' + req.files.originalname, function(err){
-     if(err){res.send('pbm durant le déplacement');
+    fs.rename(image.path, 'public/images/' + image.originalname);
     } else {
-      res.send('Fichier uploadé avec succès');
-    }
-  });
+      res.send('erreur dans le téléchargement du fichier');
   }
-
 });
+res.send('fichier téléchargé avec succès');
+  });
+  
+
 module.exports = router;
