@@ -15,19 +15,28 @@ router.get('/uploaddufichier', function(req,res,next) {
   res.render('form');
 });
 
-router.post('/uploaddufichier', upload.single('monfichier'), function(req, res, next){
-  console.log(req.file);
-  if (req.file.size<(3*1024*1024) && req.file.mimetype == 'image/png'){
+router.post('/uploaddufichier', upload.array('monfichier', 4), function(req, res, next){
+  
+  req.files.forEach(function(image){
+    console.log(image);
+  if (image.size<(3*1024*1024) && image.mimetype == 'image/png'){
     //traitement du formulaire
     console.log('c\'est ok');
     //déplacement fichier du tmp à public/images
-    fs.rename(req.file.path, 'public/images/' + req.file.originalname, function(err){
-     if(err){res.send('pbm durant le déplacement');
+    fs.rename(image.path, 'public/images/' + image.originalname);
     } else {
-      res.send('Fichier uploadé avec succès');
-    }
-  });
+      res.send('erreur dans le téléchargement du fichier');
   }
+});
+res.send('fichier téléchargé avec succès');
+  });
+  
+  
 
+router.get('/maroute', function(req, res) {
+  res.render('sup-form');
+})
+router.delete('/maroute', function(req, res) {
+    // suppression de la ressource
 });
 module.exports = router;
